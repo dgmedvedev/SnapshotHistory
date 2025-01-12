@@ -9,10 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.medvedev.snapshothistory.R
 import com.medvedev.snapshothistory.databinding.ActivityMainBinding
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,9 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        lifecycleScope.launch {
-            vm.startCamera(this@MainActivity, binding.previewView)
-        }
+        vm.startCamera(this@MainActivity, binding.previewView)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
