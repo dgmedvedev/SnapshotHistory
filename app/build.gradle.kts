@@ -39,7 +39,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -51,6 +50,9 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
+
+    // ViewModel Lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -1,15 +1,16 @@
 package com.medvedev.snapshothistory.data.repository
 
 import android.graphics.Bitmap
+import androidx.camera.view.PreviewView
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import com.medvedev.snapshothistory.data.provider.CameraProvider
-import com.medvedev.snapshothistory.data.provider.FileProvider
+import com.medvedev.snapshothistory.data.manager.camera.CameraManager
 import com.medvedev.snapshothistory.domain.model.Snapshot
 import com.medvedev.snapshothistory.domain.repository.SnapshotRepository
 
 class SnapshotRepositoryImpl(
-    private val cameraProvider: CameraProvider,
-    //private val fileProvider: FileProvider
+    private val cameraManager: CameraManager,
+//    private val fileManager: FileManager
 ) : SnapshotRepository {
     override suspend fun getSnapshot(snapshotId: Int): Snapshot {
         TODO("Not yet implemented")
@@ -23,12 +24,12 @@ class SnapshotRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun startCamera() {
-        cameraProvider.startCamera()
+    override suspend fun startCamera(lifecycleOwner: LifecycleOwner, previewView: PreviewView) {
+        cameraManager.startCamera(lifecycleOwner, previewView)
     }
 
     override fun stopCamera() {
-        cameraProvider.stopCamera()
+        cameraManager.stopCamera()
     }
 
     override suspend fun takeSnapshot(): Bitmap {
@@ -41,5 +42,9 @@ class SnapshotRepositoryImpl(
 
     override fun getSnapshotList(): LiveData<List<Snapshot>> {
         TODO("Not yet implemented")
+    }
+
+    companion object {
+        const val LOG_TAG = "CameraX_TEST"
     }
 }

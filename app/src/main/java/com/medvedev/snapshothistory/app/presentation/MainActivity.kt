@@ -4,7 +4,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -12,8 +11,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.medvedev.snapshothistory.R
-import com.medvedev.snapshothistory.data.provider.CameraProviderImpl
-import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
 import com.medvedev.snapshothistory.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
 
@@ -23,15 +20,15 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
-    private val preview by lazy(LazyThreadSafetyMode.NONE) {
-        Preview.Builder().build()
-    }
-    private val repository by lazy(LazyThreadSafetyMode.NONE) {
-        SnapshotRepositoryImpl(CameraProviderImpl(this, preview))
+    private val vm by lazy(LazyThreadSafetyMode.NONE) {
+        ViewModelProvider(this, MainViewModelFactory(applicationContext))[MainViewModel::class.java]
     }
 
-    private val vm by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(this)[MainViewModel::class.java]
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launch {
+            vm.startCamera(this@MainActivity, binding.previewView)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,15 +40,15 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         requestPermissions()
-        lifecycleScope.launch {
-            repository.startCamera()
-            preview.surfaceProvider = binding.previewView.surfaceProvider
-        }
     }
 
-//    override fun onRequestPermissionsResult(
+    override fun onStop() {
+        super.onStop()
+        vm.stopCamera()
+    }
+
+//        override fun onRequestPermissionsResult(
 //        requestCode: Int,
 //        permissions: Array<out String>,
 //        grantResults: IntArray
@@ -69,11 +66,6 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
 //    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        repository.stopCamera()
-    }
 
     private fun allPermissionsGranted(): Boolean =
         MainViewModel.REQUIRED_PERMISSIONS.all { permission ->
