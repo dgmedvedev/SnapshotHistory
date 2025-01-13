@@ -9,6 +9,7 @@ import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
 import com.medvedev.snapshothistory.domain.usecase.CheckPermissionsUseCase
 import com.medvedev.snapshothistory.domain.usecase.StartCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.StopCameraUseCase
+import com.medvedev.snapshothistory.domain.usecase.TakeSnapshotUseCase
 
 class MainViewModelFactory(context: Context) : ViewModelProvider.Factory {
 
@@ -39,12 +40,16 @@ class MainViewModelFactory(context: Context) : ViewModelProvider.Factory {
         StopCameraUseCase(repository = snapshotRepository)
     }
 
+    private val takeSnapshotUseCase by lazy(LazyThreadSafetyMode.NONE) {
+        TakeSnapshotUseCase(repository = snapshotRepository)
+    }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return MainViewModel(
             checkPermissionsUseCase = checkPermissionsUseCase,
             startCameraUseCase = startCameraUseCase,
-            stopCameraUseCase = stopCameraUseCase
+            stopCameraUseCase = stopCameraUseCase,
+            takeSnapshotUseCase = takeSnapshotUseCase
         ) as T
     }
 }

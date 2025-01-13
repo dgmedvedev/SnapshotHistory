@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        vm.startCamera(this@MainActivity, binding.previewView)
+        vm.startCamera(this@MainActivity, binding.viewFinder)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         bindViewModel()
+        setListeners()
     }
 
     override fun onRequestPermissionsResult(
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == MainViewModel.REQUEST_CODE_PERMISSIONS) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                vm.startCamera(this@MainActivity, binding.previewView)
+                vm.startCamera(this@MainActivity, binding.viewFinder)
             } else {
                 showToast(R.string.permissions_must_be_granted)
             }
@@ -69,6 +70,15 @@ class MainActivity : AppCompatActivity() {
                     MainViewModel.REQUEST_CODE_PERMISSIONS
                 )
             }
+        }
+        vm.resultPhotoCapture.observe(this) {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setListeners() {
+        binding.cameraButton.setOnClickListener {
+            vm.onCameraButtonPressed(contentResolver = contentResolver)
         }
     }
 

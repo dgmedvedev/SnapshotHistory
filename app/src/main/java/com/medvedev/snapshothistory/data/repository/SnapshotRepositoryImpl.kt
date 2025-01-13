@@ -1,6 +1,8 @@
 package com.medvedev.snapshothistory.data.repository
 
+import android.content.ContentResolver
 import android.graphics.Bitmap
+import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -25,16 +27,22 @@ class SnapshotRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun startCamera(lifecycleOwner: LifecycleOwner, previewView: PreviewView) {
-        cameraManager.startCamera(lifecycleOwner, previewView)
+    override suspend fun startCamera(lifecycleOwner: LifecycleOwner, viewFinder: PreviewView) {
+        cameraManager.startCamera(lifecycleOwner, viewFinder)
     }
 
     override fun stopCamera() {
         cameraManager.stopCamera()
     }
 
-    override suspend fun takeSnapshot(): Bitmap {
-        TODO("Not yet implemented")
+    override suspend fun takeSnapshot(
+        contentResolver: ContentResolver,
+        imageSavedCallback: ImageCapture.OnImageSavedCallback
+    ) {
+        cameraManager.takeSnapshot(
+            contentResolver = contentResolver,
+            imageSavedCallback = imageSavedCallback
+        )
     }
 
     override fun configureSaveDirectory(directory: String) {

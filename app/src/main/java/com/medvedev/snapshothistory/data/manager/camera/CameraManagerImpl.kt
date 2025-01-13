@@ -1,6 +1,10 @@
 package com.medvedev.snapshothistory.data.manager.camera
 
+import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.Context
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -11,6 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
 import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class CameraManagerImpl(private val context: Context) : CameraManager {
 
@@ -18,11 +24,11 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
     private var cameraProvider: ProcessCameraProvider? = null
     private var imageCapture: ImageCapture? = null
 
-    override fun startCamera(lifecycleOwner: LifecycleOwner, previewView: PreviewView) {
+    override fun startCamera(lifecycleOwner: LifecycleOwner, viewFinder: PreviewView) {
         cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture?.addListener({
             val preview = Preview.Builder().build().also {
-                it.surfaceProvider = previewView.surfaceProvider
+                it.surfaceProvider = viewFinder.surfaceProvider
             }
             cameraProvider = cameraProviderFuture?.get()
             imageCapture = ImageCapture.Builder().build()
@@ -51,7 +57,55 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
         cameraProvider?.unbindAll()
     }
 
-    override fun takeSnapshot() {
-        TODO("Not yet implemented")
+    override fun takeSnapshot(
+        contentResolver: ContentResolver,
+        imageSavedCallback: ImageCapture.OnImageSavedCallback
+    ) {
+        // Get a stable reference of the modifiable image capture use case
+        val imageCapture = imageCapture ?: return
+
+        // Create time stamped name and MediaStore entry.
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+            .format(System.currentTimeMillis())
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+            }
+        }
+
+        // Create output options object which contains file + metadata
+        val outputOptions = ImageCapture.OutputFileOptions
+            .Builder(
+                contentResolver,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues
+            )
+            .build()
+
+        // Set up image capture listener, which is triggered after photo has
+        // been taken
+        imageCapture.takePicture(
+            outputOptions,
+            ContextCompat.getMainExecutor(context),
+            imageSavedCallback
+//            object : ImageCapture.OnImageSavedCallback {
+//                override fun onError(exc: ImageCaptureException) {
+//                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+//                }
+//
+//                override fun
+//                        onImageSaved(output: ImageCapture.OutputFileResults) {
+//                    val msg = "Photo capture succeeded: ${output.savedUri}"
+//                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+//                    Log.d(SnapshotRepositoryImpl.LOG_TAG, msg)
+//                }
+//            }
+        )
+    }
+
+    companion object {
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 }
