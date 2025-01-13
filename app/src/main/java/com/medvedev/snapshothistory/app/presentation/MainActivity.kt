@@ -1,9 +1,13 @@
 package com.medvedev.snapshothistory.app.presentation
 
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
@@ -11,6 +15,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.medvedev.snapshothistory.R
 import com.medvedev.snapshothistory.databinding.ActivityMainBinding
+import java.io.File
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -80,9 +86,41 @@ class MainActivity : AppCompatActivity() {
         binding.cameraButton.setOnClickListener {
             vm.onCameraButtonPressed(contentResolver = contentResolver)
         }
+        binding.snapshotListButton.setOnClickListener {
+            openDirectoryChooser()
+        }
     }
 
     private fun showToast(messageId: Int) {
         Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show()
     }
+
+    private fun getOutputDirectory(): File {
+        TODO("Not yet implemented")
+    }
+
+    private fun openDirectoryChooser() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        firstActivityResultLauncher.launch(intent)
+    }
+
+    private var firstActivityResultLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                data?.data?.let { uri ->
+                    uri.path?.let {
+                        File(it).also { file ->
+                            Toast.makeText(
+                                this,
+                                "Chosen directory: ${file.path}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                }
+            } else if (result.resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(this, "Result Cancelled", Toast.LENGTH_SHORT).show()
+            }
+        }
 }
