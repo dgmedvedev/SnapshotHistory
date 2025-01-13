@@ -5,10 +5,12 @@ import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.medvedev.snapshothistory.data.manager.camera.CameraManager
+import com.medvedev.snapshothistory.data.permission.PermissionController
 import com.medvedev.snapshothistory.domain.model.Snapshot
 import com.medvedev.snapshothistory.domain.repository.SnapshotRepository
 
 class SnapshotRepositoryImpl(
+    private val permissionController: PermissionController,
     private val cameraManager: CameraManager,
 //    private val fileManager: FileManager
 ) : SnapshotRepository {
@@ -16,9 +18,8 @@ class SnapshotRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun requestPermissions(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override suspend fun checkPermissions(permissions: Array<String>): Boolean =
+        permissionController.checkPermissions(permissions)
 
     override suspend fun saveSnapshot(snapshot: Bitmap, directory: String): Boolean {
         TODO("Not yet implemented")

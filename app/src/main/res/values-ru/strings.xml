@@ -3,5 +3,5 @@
     <string name="app_name">Snapshot History</string>
     <string name="fab_take_snapshot">Take a snapshot</string>
     <string name="fab_snapshot_list">View snapshots</string>
-    <string name="permission_camera_denied">Разрешение на использование камеры отклонено</string>
+    <string name="permissions_must_be_granted">Необходимо предоставить все разрешения</string>
 </resources>

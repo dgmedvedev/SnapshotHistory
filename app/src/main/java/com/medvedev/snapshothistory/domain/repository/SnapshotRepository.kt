@@ -8,7 +8,7 @@ import com.medvedev.snapshothistory.domain.model.Snapshot
 
 interface SnapshotRepository {
     suspend fun getSnapshot(snapshotId: Int): Snapshot
-    suspend fun requestPermissions(): Boolean
+    suspend fun checkPermissions(permissions: Array<String>): Boolean
     suspend fun saveSnapshot(snapshot: Bitmap, directory: String): Boolean
     suspend fun startCamera(lifecycleOwner: LifecycleOwner, previewView: PreviewView)
     suspend fun takeSnapshot(): Bitmap

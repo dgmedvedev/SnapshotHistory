@@ -2,10 +2,10 @@ package com.medvedev.snapshothistory.app.presentation
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
@@ -36,7 +36,23 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        requestPermissions()
+
+        bindViewModel()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == MainViewModel.REQUEST_CODE_PERMISSIONS) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                vm.startCamera(this@MainActivity, binding.previewView)
+            } else {
+                showToast(R.string.permissions_must_be_granted)
+            }
+        }
     }
 
     override fun onStop() {
@@ -44,40 +60,19 @@ class MainActivity : AppCompatActivity() {
         vm.stopCamera()
     }
 
-//        override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                startCamera()
-//            } else {
-//                Toast.makeText(
-//                    this,
-//                    R.string.permission_camera_denied,
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-//        }
-//    }
-
-    private fun allPermissionsGranted(): Boolean =
-        MainViewModel.REQUIRED_PERMISSIONS.all { permission ->
-            ContextCompat.checkSelfPermission(
-                baseContext,
-                permission
-            ) == PackageManager.PERMISSION_GRANTED
+    private fun bindViewModel() {
+        vm.hasPermissions.observe(this) { hasPermissions ->
+            if (!hasPermissions) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    MainViewModel.REQUIRED_PERMISSIONS,
+                    MainViewModel.REQUEST_CODE_PERMISSIONS
+                )
+            }
         }
+    }
 
-    private fun requestPermissions() {
-        if (!allPermissionsGranted()) {
-            ActivityCompat.requestPermissions(
-                this,
-                MainViewModel.REQUIRED_PERMISSIONS,
-                MainViewModel.REQUEST_CODE_PERMISSIONS
-            )
-        }
+    private fun showToast(messageId: Int) {
+        Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show()
     }
 }
