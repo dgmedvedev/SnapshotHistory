@@ -3,6 +3,7 @@ package com.medvedev.snapshothistory.app.presentation
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -87,7 +88,7 @@ class MainActivity : AppCompatActivity() {
             vm.onCameraButtonPressed(contentResolver = contentResolver)
         }
         binding.snapshotListButton.setOnClickListener {
-            openDirectoryChooser()
+            getOutputDirectory()
         }
     }
 
@@ -95,11 +96,7 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, messageId, Toast.LENGTH_SHORT).show()
     }
 
-    private fun getOutputDirectory(): File {
-        TODO("Not yet implemented")
-    }
-
-    private fun openDirectoryChooser() {
+    private fun getOutputDirectory() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         firstActivityResultLauncher.launch(intent)
     }
@@ -108,8 +105,10 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
-                data?.data?.let { uri ->
-                    uri.path?.let {
+                val uri: Uri? = data?.data
+                uri?.let {
+                    it.path?.let {
+
                         File(it).also { file ->
                             Toast.makeText(
                                 this,
