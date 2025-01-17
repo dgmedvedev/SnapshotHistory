@@ -1,5 +1,8 @@
 package com.medvedev.snapshothistory.data.manager.file
 
+import android.net.Uri
+import java.io.File
+
 interface FileManager {
-    fun saveSnapshot(): Boolean
+    fun getOutputDirectory(uri: Uri?): File
 }

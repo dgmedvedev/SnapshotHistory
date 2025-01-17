@@ -4,4 +4,6 @@
     <string name="fab_take_snapshot">Take a snapshot</string>
     <string name="fab_snapshot_list">View snapshots</string>
     <string name="permissions_must_be_granted">Необходимо предоставить все разрешения</string>
+    <string name="try_again">Попробуйте снова</string>
+    <string name="select_folder">Выберите папку для сохранения</string>
 </resources>

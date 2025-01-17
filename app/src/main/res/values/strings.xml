@@ -4,4 +4,6 @@
     <string name="fab_take_snapshot">Take a snapshot</string>
     <string name="fab_snapshot_list">View snapshots</string>
     <string name="permissions_must_be_granted">All permissions must be granted</string>
+    <string name="try_again">Try again</string>
+    <string name="select_folder">Select a folder to save</string>
 </resources>

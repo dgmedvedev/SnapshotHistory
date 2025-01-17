@@ -2,19 +2,22 @@ package com.medvedev.snapshothistory.data.repository
 
 import android.content.ContentResolver
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.medvedev.snapshothistory.data.manager.camera.CameraManager
+import com.medvedev.snapshothistory.data.manager.file.FileManager
 import com.medvedev.snapshothistory.data.permission.PermissionController
 import com.medvedev.snapshothistory.domain.model.Snapshot
 import com.medvedev.snapshothistory.domain.repository.SnapshotRepository
+import java.io.File
 
 class SnapshotRepositoryImpl(
     private val permissionController: PermissionController,
     private val cameraManager: CameraManager,
-//    private val fileManager: FileManager
+    private val fileManager: FileManager
 ) : SnapshotRepository {
     override suspend fun getSnapshot(snapshotId: Int): Snapshot {
         TODO("Not yet implemented")
@@ -22,6 +25,9 @@ class SnapshotRepositoryImpl(
 
     override suspend fun checkPermissions(permissions: Array<String>): Boolean =
         permissionController.checkPermissions(permissions)
+
+    override fun getOutputDirectory(uri: Uri?): File =
+        fileManager.getOutputDirectory(uri)
 
     override suspend fun saveSnapshot(snapshot: Bitmap, directory: String): Boolean {
         TODO("Not yet implemented")
@@ -35,14 +41,12 @@ class SnapshotRepositoryImpl(
         cameraManager.stopCamera()
     }
 
-    override suspend fun takeSnapshot(
+    override fun takeSnapshot(
+        uri: Uri?,
         contentResolver: ContentResolver,
         imageSavedCallback: ImageCapture.OnImageSavedCallback
     ) {
-        cameraManager.takeSnapshot(
-            contentResolver = contentResolver,
-            imageSavedCallback = imageSavedCallback
-        )
+        cameraManager.takeSnapshot(uri, contentResolver, imageSavedCallback)
     }
 
     override fun configureSaveDirectory(directory: String) {

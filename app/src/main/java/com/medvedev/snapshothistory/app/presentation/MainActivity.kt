@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
@@ -14,9 +15,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.medvedev.snapshothistory.R
+import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
 import com.medvedev.snapshothistory.databinding.ActivityMainBinding
-import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     private val vm by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProvider(this, MainViewModelFactory(applicationContext))[MainViewModel::class.java]
     }
+
+    private var uri: Uri? = null
 
     override fun onStart() {
         super.onStart()
@@ -78,6 +84,9 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+        vm.hasSelectedFolder.observe(this) {
+
+        }
         vm.resultPhotoCapture.observe(this) {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
@@ -85,10 +94,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun setListeners() {
         binding.cameraButton.setOnClickListener {
-            vm.onCameraButtonPressed(contentResolver = contentResolver)
+            getOutputDirectory()
         }
         binding.snapshotListButton.setOnClickListener {
-            getOutputDirectory()
         }
     }
 
@@ -105,21 +113,14 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
-                val uri: Uri? = data?.data
-                uri?.let {
-                    it.path?.let {
-
-                        File(it).also { file ->
-                            Toast.makeText(
-                                this,
-                                "Chosen directory: ${file.path}",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
+                val resultUri: Uri? = data?.data
+                uri = resultUri
+                Log.d(SnapshotRepositoryImpl.LOG_TAG, "uri registerForActivityResult: $uri")
+                lifecycleScope.launch(Dispatchers.Main) {
+                    vm.onCameraButtonPressed(uri = uri, contentResolver = contentResolver)
                 }
             } else if (result.resultCode == Activity.RESULT_CANCELED) {
-                Toast.makeText(this, "Result Cancelled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.select_folder, Toast.LENGTH_SHORT).show()
             }
         }
 }

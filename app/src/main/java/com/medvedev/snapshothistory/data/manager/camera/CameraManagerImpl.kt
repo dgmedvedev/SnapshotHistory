@@ -3,7 +3,9 @@ package com.medvedev.snapshothistory.data.manager.camera
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.core.CameraSelector
@@ -15,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
 import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -58,54 +61,66 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
     }
 
     override fun takeSnapshot(
+        uri: Uri?,
         contentResolver: ContentResolver,
         imageSavedCallback: ImageCapture.OnImageSavedCallback
     ) {
-        // Get a stable reference of the modifiable image capture use case
-        val imageCapture = imageCapture ?: return
+        val outputOptions: ImageCapture.OutputFileOptions
 
-        // Create time stamped name and MediaStore entry.
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault())
             .format(System.currentTimeMillis())
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+        val snapshotName = "$name.jpg"
+        val folderPath = getFolderPathFromUri(uri)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val contentValues = ContentValues().apply {
+//                put(MediaStore.MediaColumns.DISPLAY_NAME, name)       // TODO - Check it out!
+//                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")  // TODO - Check it out!
+                put(MediaStore.Images.Media.DISPLAY_NAME, snapshotName)
+                put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                put(MediaStore.Images.Media.RELATIVE_PATH, folderPath) // Путь к папке
             }
+
+            outputOptions = ImageCapture.OutputFileOptions
+                .Builder(
+                    contentResolver,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    contentValues
+                ).build()
+        } else {
+            var outputDirectory: File
+            outputDirectory = File("${Environment.getExternalStorageDirectory()}").let {
+                File(it, folderPath).apply { mkdir() }
+            }
+            if (!outputDirectory.exists()) outputDirectory =
+                DEFAULT_PICTURES_DIRECTORY // TODO - or context.filesDir
+
+            val file = File(outputDirectory, snapshotName)
+            outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
         }
 
-        // Create output options object which contains file + metadata
-        val outputOptions = ImageCapture.OutputFileOptions
-            .Builder(
-                contentResolver,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues
-            )
-            .build()
-
-        // Set up image capture listener, which is triggered after photo has
-        // been taken
-        imageCapture.takePicture(
+        imageCapture?.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(context),
             imageSavedCallback
-//            object : ImageCapture.OnImageSavedCallback {
-//                override fun onError(exc: ImageCaptureException) {
-//                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-//                }
-//
-//                override fun
-//                        onImageSaved(output: ImageCapture.OutputFileResults) {
-//                    val msg = "Photo capture succeeded: ${output.savedUri}"
-//                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-//                    Log.d(SnapshotRepositoryImpl.LOG_TAG, msg)
-//                }
-//            }
         )
     }
 
+    private fun getFolderPathFromUri(uri: Uri?): String {
+        if (uri == null) return EMPTY_PATH
+        val path = uri.path ?: return EMPTY_PATH
+        val split = path.split(":")
+        var folderPath: String = EMPTY_PATH
+        if (split.size > 1) {
+            folderPath = split[1]
+        }
+        return folderPath
+    }
+
     companion object {
+        private const val EMPTY_PATH = ""
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private val DEFAULT_PICTURES_DIRECTORY =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
     }
 }

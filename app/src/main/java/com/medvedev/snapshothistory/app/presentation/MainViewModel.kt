@@ -2,6 +2,7 @@ package com.medvedev.snapshothistory.app.presentation
 
 import android.Manifest
 import android.content.ContentResolver
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.camera.core.ImageCapture
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
 import com.medvedev.snapshothistory.domain.usecase.CheckPermissionsUseCase
+import com.medvedev.snapshothistory.domain.usecase.GetOutputDirectoryUseCase
 import com.medvedev.snapshothistory.domain.usecase.StartCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.StopCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.TakeSnapshotUseCase
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val checkPermissionsUseCase: CheckPermissionsUseCase,
+    private val getOutputDirectoryUseCase: GetOutputDirectoryUseCase,
     private val startCameraUseCase: StartCameraUseCase,
     private val stopCameraUseCase: StopCameraUseCase,
     private val takeSnapshotUseCase: TakeSnapshotUseCase
@@ -33,6 +36,10 @@ class MainViewModel(
     private var _resultPhotoCapture = MutableLiveData<String>()
     val resultPhotoCapture: LiveData<String>
         get() = _resultPhotoCapture
+
+    private var _hasSelectedFolder = MutableLiveData<Boolean>()
+    val hasSelectedFolder: LiveData<Boolean>
+        get() = _hasSelectedFolder
 
     init {
         viewModelScope.launch {
@@ -48,9 +55,13 @@ class MainViewModel(
         stopCameraUseCase()
     }
 
-    fun onCameraButtonPressed(contentResolver: ContentResolver) {
+    fun userSelectedFolder() {
+        _hasSelectedFolder.value = true
+    }
+
+    fun onCameraButtonPressed(uri: Uri?, contentResolver: ContentResolver) {
         viewModelScope.launch {
-            takeSnapshotUseCase(contentResolver,
+            takeSnapshotUseCase(uri, contentResolver,
                 object : ImageCapture.OnImageSavedCallback {
                     override fun onError(exc: ImageCaptureException) {
                         Log.e(
