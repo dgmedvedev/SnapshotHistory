@@ -40,6 +40,7 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
 
             try {
                 cameraProvider?.unbindAll()
+
                 cameraProvider?.bindToLifecycle(
                     lifecycleOwner,
                     cameraSelector,
@@ -74,8 +75,6 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
-//                put(MediaStore.MediaColumns.DISPLAY_NAME, name)       // TODO - Check it out!
-//                put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")  // TODO - Check it out!
                 put(MediaStore.Images.Media.DISPLAY_NAME, snapshotName)
                 put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
                 put(MediaStore.Images.Media.RELATIVE_PATH, folderPath) // Путь к папке
@@ -93,7 +92,7 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
                 File(it, folderPath).apply { mkdir() }
             }
             if (!outputDirectory.exists()) outputDirectory =
-                DEFAULT_PICTURES_DIRECTORY // TODO - or context.filesDir
+                DEFAULT_PICTURES_DIRECTORY
 
             val file = File(outputDirectory, snapshotName)
             outputOptions = ImageCapture.OutputFileOptions.Builder(file).build()
@@ -109,7 +108,7 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
     private fun getFolderPathFromUri(uri: Uri?): String {
         if (uri == null) return EMPTY_PATH
         val path = uri.path ?: return EMPTY_PATH
-        val split = path.split(":")
+        val split = path.split(SPLIT_DELIMITERS)
         var folderPath: String = EMPTY_PATH
         if (split.size > 1) {
             folderPath = split[1]
@@ -119,6 +118,7 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
 
     companion object {
         private const val EMPTY_PATH = ""
+        private const val SPLIT_DELIMITERS = ":"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private val DEFAULT_PICTURES_DIRECTORY =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)

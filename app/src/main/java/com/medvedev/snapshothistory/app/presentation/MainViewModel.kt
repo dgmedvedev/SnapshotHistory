@@ -37,13 +37,9 @@ class MainViewModel(
     val resultPhotoCapture: LiveData<String>
         get() = _resultPhotoCapture
 
-    private var _hasSelectedFolder = MutableLiveData<Boolean>()
-    val hasSelectedFolder: LiveData<Boolean>
-        get() = _hasSelectedFolder
-
     init {
         viewModelScope.launch {
-            _hasPermissions.value = checkPermissionsUseCase(REQUIRED_PERMISSIONS)
+            //_hasPermissions.value = checkPermissionsUseCase(REQUIRED_PERMISSIONS)
         }
     }
 
@@ -53,10 +49,6 @@ class MainViewModel(
 
     fun stopCamera() {
         stopCameraUseCase()
-    }
-
-    fun userSelectedFolder() {
-        _hasSelectedFolder.value = true
     }
 
     fun onCameraButtonPressed(uri: Uri?, contentResolver: ContentResolver) {
@@ -83,10 +75,10 @@ class MainViewModel(
     }
 
     companion object {
-        const val REQUEST_CODE_PERMISSIONS = 100
         val REQUIRED_PERMISSIONS =
             mutableListOf(Manifest.permission.CAMERA).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                    add(Manifest.permission.READ_EXTERNAL_STORAGE)
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 }
             }.toTypedArray()
