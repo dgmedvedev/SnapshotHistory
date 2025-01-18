@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Snapshot History</string>
+    <string name="fab_take_snapshot">Take a snapshot</string>
+    <string name="fab_snapshot_list">View snapshots</string>
+    <string name="permissions_must_be_granted">Необходимо предоставить все разрешения</string>
+    <string name="try_again">Попробуйте снова</string>
+    <string name="select_folder">Выберите папку для сохранения</string>
+    <string name="allowed_directories">Разрешенными каталогами являются [DCIM, Pictures]</string>
+
+    <!--    Errors-->
+    <string name="processing_failed">Processing failed.</string>
+</resources>
