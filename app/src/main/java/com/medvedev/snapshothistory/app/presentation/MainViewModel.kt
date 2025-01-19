@@ -14,7 +14,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
-import com.medvedev.snapshothistory.domain.usecase.CheckPermissionsUseCase
 import com.medvedev.snapshothistory.domain.usecase.GetOutputDirectoryUseCase
 import com.medvedev.snapshothistory.domain.usecase.StartCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.StopCameraUseCase
@@ -22,26 +21,15 @@ import com.medvedev.snapshothistory.domain.usecase.TakeSnapshotUseCase
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val checkPermissionsUseCase: CheckPermissionsUseCase,
     private val getOutputDirectoryUseCase: GetOutputDirectoryUseCase,
     private val startCameraUseCase: StartCameraUseCase,
     private val stopCameraUseCase: StopCameraUseCase,
     private val takeSnapshotUseCase: TakeSnapshotUseCase
 ) : ViewModel() {
 
-    private var _hasPermissions = MutableLiveData<Boolean>()
-    val hasPermissions: LiveData<Boolean>
-        get() = _hasPermissions
-
     private var _resultPhotoCapture = MutableLiveData<String>()
     val resultPhotoCapture: LiveData<String>
         get() = _resultPhotoCapture
-
-    init {
-        viewModelScope.launch {
-            //_hasPermissions.value = checkPermissionsUseCase(REQUIRED_PERMISSIONS)
-        }
-    }
 
     fun startCamera(lifecycleOwner: LifecycleOwner, viewFinder: PreviewView) {
         viewModelScope.launch { startCameraUseCase(lifecycleOwner, viewFinder) }
