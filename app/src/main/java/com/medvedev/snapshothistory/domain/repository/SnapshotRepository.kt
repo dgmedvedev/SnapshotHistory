@@ -12,7 +12,6 @@ import java.io.File
 
 interface SnapshotRepository {
     suspend fun getSnapshot(snapshotId: Int): Snapshot
-    suspend fun checkPermissions(permissions: Array<String>): Boolean
     suspend fun saveSnapshot(snapshot: Bitmap, directory: String): Boolean
     suspend fun startCamera(lifecycleOwner: LifecycleOwner, viewFinder: PreviewView)
     fun takeSnapshot(

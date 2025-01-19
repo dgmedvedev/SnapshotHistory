@@ -32,6 +32,36 @@ class MainActivity : AppCompatActivity() {
         ViewModelProvider(this, MainViewModelFactory(applicationContext))[MainViewModel::class.java]
     }
 
+    private val resultLauncherOfPermissions: ActivityResultLauncher<Array<String>> =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            var permissionGranted = true
+            permissions.entries.forEach {
+                if (it.key in REQUIRED_PERMISSIONS && !it.value)
+                    permissionGranted = false
+            }
+            if (!permissionGranted) {
+                Toast.makeText(this, R.string.permissions_must_be_granted, Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                vm.startCamera(this, binding.viewFinder)
+            }
+        }
+
+    private val resultLauncherChosenDirectory: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val uri: Uri? = data?.data
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        vm.onCameraButtonPressed(uri = uri, contentResolver = contentResolver)
+                    }
+                }
+            } else if (result.resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(this, R.string.select_folder, Toast.LENGTH_SHORT).show()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -55,41 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            baseContext, it
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestPermissions() {
-        resultLauncherOfPermissions.launch(REQUIRED_PERMISSIONS)
-    }
-
-    private val resultLauncherOfPermissions: ActivityResultLauncher<Array<String>> =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            var permissionGranted = true
-            permissions.entries.forEach {
-                if (it.key in REQUIRED_PERMISSIONS && !it.value)
-                    permissionGranted = false
-            }
-            if (!permissionGranted) {
-                Toast.makeText(this, R.string.permissions_must_be_granted, Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                vm.startCamera(this, binding.viewFinder)
-            }
-        }
-
     private fun bindViewModel() {
-//        vm.hasPermissions.observe(this) { hasPermissions ->
-//            if (!hasPermissions) {
-//                ActivityCompat.requestPermissions(
-//                    this,
-//                    MainViewModel.REQUIRED_PERMISSIONS,
-//                    MainViewModel.REQUEST_CODE_PERMISSIONS
-//                )
-//            }
-//        }
         vm.resultPhotoCapture.observe(this) { result ->
             val message = when (result) {
                 getString(R.string.processing_failed) -> getString(R.string.allowed_directories)
@@ -107,23 +103,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun chooseOutputDirectory() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-        firstActivityResultLauncher.launch(intent)
+    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(
+            baseContext, it
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private var firstActivityResultLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data: Intent? = result.data
-                val uri: Uri? = data?.data
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        vm.onCameraButtonPressed(uri = uri, contentResolver = contentResolver)
-                    }
-                }
-            } else if (result.resultCode == Activity.RESULT_CANCELED) {
-                Toast.makeText(this, R.string.select_folder, Toast.LENGTH_SHORT).show()
-            }
-        }
+    private fun requestPermissions() {
+        resultLauncherOfPermissions.launch(REQUIRED_PERMISSIONS)
+    }
+
+    private fun chooseOutputDirectory() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        resultLauncherChosenDirectory.launch(intent)
+    }
 }
