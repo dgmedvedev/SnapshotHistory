@@ -14,6 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
+import com.medvedev.snapshothistory.domain.usecase.AddSnapshotUseCase
 import com.medvedev.snapshothistory.domain.usecase.GetOutputDirectoryUseCase
 import com.medvedev.snapshothistory.domain.usecase.StartCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.StopCameraUseCase
@@ -21,6 +22,7 @@ import com.medvedev.snapshothistory.domain.usecase.TakeSnapshotUseCase
 import kotlinx.coroutines.launch
 
 class MainViewModel(
+    private val addSnapshotUseCase: AddSnapshotUseCase,
     private val getOutputDirectoryUseCase: GetOutputDirectoryUseCase,
     private val startCameraUseCase: StartCameraUseCase,
     private val stopCameraUseCase: StopCameraUseCase,

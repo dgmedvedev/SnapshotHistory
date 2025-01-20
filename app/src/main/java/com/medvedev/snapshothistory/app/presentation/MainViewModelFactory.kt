@@ -3,9 +3,11 @@ package com.medvedev.snapshothistory.app.presentation
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.medvedev.snapshothistory.data.database.SnapshotDatabase
 import com.medvedev.snapshothistory.data.manager.camera.CameraManagerImpl
 import com.medvedev.snapshothistory.data.manager.file.FileManagerImpl
 import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
+import com.medvedev.snapshothistory.domain.usecase.AddSnapshotUseCase
 import com.medvedev.snapshothistory.domain.usecase.GetOutputDirectoryUseCase
 import com.medvedev.snapshothistory.domain.usecase.StartCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.StopCameraUseCase
@@ -21,11 +23,20 @@ class MainViewModelFactory(context: Context) : ViewModelProvider.Factory {
         FileManagerImpl(context = context)
     }
 
+    private val snapshotDao by lazy {
+        SnapshotDatabase.getInstance(context = context).snapshotDao()
+    }
+
     private val snapshotRepository by lazy {
         SnapshotRepositoryImpl(
             cameraManager = cameraManager,
-            fileManager = fileManager
+            fileManager = fileManager,
+            snapshotDao = snapshotDao
         )
+    }
+
+    private val addSnapshotUseCase by lazy(LazyThreadSafetyMode.NONE) {
+        AddSnapshotUseCase(repository = snapshotRepository)
     }
 
     private val getOutputDirectoryUseCase by lazy(LazyThreadSafetyMode.NONE) {
@@ -46,6 +57,7 @@ class MainViewModelFactory(context: Context) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return MainViewModel(
+            addSnapshotUseCase = addSnapshotUseCase,
             getOutputDirectoryUseCase = getOutputDirectoryUseCase,
             startCameraUseCase = startCameraUseCase,
             stopCameraUseCase = stopCameraUseCase,
