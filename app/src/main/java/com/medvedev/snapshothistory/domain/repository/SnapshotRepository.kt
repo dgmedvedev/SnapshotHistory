@@ -1,7 +1,6 @@
 package com.medvedev.snapshothistory.domain.repository
 
 import android.content.ContentResolver
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
@@ -11,8 +10,8 @@ import com.medvedev.snapshothistory.domain.model.Snapshot
 import java.io.File
 
 interface SnapshotRepository {
+    suspend fun addSnapshot(snapshot: Snapshot)
     suspend fun getSnapshot(snapshotId: Int): Snapshot
-    suspend fun saveSnapshot(snapshot: Bitmap, directory: String): Boolean
     suspend fun startCamera(lifecycleOwner: LifecycleOwner, viewFinder: PreviewView)
     fun takeSnapshot(
         uri: Uri?,
