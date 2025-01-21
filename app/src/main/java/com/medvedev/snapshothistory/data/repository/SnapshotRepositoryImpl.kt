@@ -25,8 +25,10 @@ class SnapshotRepositoryImpl(
     override suspend fun getSnapshot(snapshotId: Int): Snapshot =
         snapshotDao.getSnapshot(snapshotId).toDomain()
 
-    override fun getOutputDirectory(uri: Uri?): File =
-        fileManager.getOutputDirectory(uri)
+    override fun getOutputDirectory(uri: Uri?): File {
+        val folderPath = fileManager.getFolderPathFromUri(uri)
+        return fileManager.getOutputDirectory(folderPath)
+    }
 
     override suspend fun addSnapshot(snapshot: Snapshot) {
         snapshotDao.addSnapshot(snapshot.toEntity())
@@ -45,7 +47,9 @@ class SnapshotRepositoryImpl(
         contentResolver: ContentResolver,
         imageSavedCallback: ImageCapture.OnImageSavedCallback
     ) {
-        cameraManager.takeSnapshot(uri, contentResolver, imageSavedCallback)
+        val folderPath = fileManager.getFolderPathFromUri(uri)
+        val outputDirectory = fileManager.getOutputDirectory(folderPath)
+        cameraManager.takeSnapshot(folderPath, outputDirectory, contentResolver, imageSavedCallback)
     }
 
     override fun configureSaveDirectory(directory: String) {

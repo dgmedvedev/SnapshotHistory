@@ -4,5 +4,6 @@ import android.net.Uri
 import java.io.File
 
 interface FileManager {
-    fun getOutputDirectory(uri: Uri?): File
+    fun getFolderPathFromUri(uri: Uri?): String
+    fun getOutputDirectory(folderPath: String): File
 }
