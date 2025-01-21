@@ -20,7 +20,7 @@ class MainViewModelFactory(context: Context) : ViewModelProvider.Factory {
     }
 
     private val fileManager by lazy {
-        FileManagerImpl(context = context)
+        FileManagerImpl()
     }
 
     private val snapshotDao by lazy {
