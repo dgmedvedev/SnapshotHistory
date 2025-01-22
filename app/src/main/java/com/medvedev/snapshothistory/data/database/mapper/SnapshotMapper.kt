@@ -8,7 +8,8 @@ fun Snapshot.toEntity() = SnapshotEntity(
     date = date,
     latitude = latitude,
     longitude = longitude,
-    name = name
+    name = name,
+    filePath = filePath
 )
 
 fun SnapshotEntity.toDomain() = Snapshot(
@@ -16,7 +17,8 @@ fun SnapshotEntity.toDomain() = Snapshot(
     date = date,
     latitude = latitude,
     longitude = longitude,
-    name = name
+    name = name,
+    filePath = filePath
 )
 
 fun List<SnapshotEntity>.toSnapshotDomainList() = this.map { it.toDomain() }

@@ -7,6 +7,7 @@ data class Snapshot(
     val latitude: Double,
     val longitude: Double,
     val name: String,
+    val filePath: String,
     var id: Int = UNDEFINED_ID
 ) {
     companion object {
