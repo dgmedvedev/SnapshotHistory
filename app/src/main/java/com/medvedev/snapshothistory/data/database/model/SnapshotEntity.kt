@@ -11,5 +11,6 @@ class SnapshotEntity(
     val date: Date = Date(),
     val latitude: Double,
     val longitude: Double,
-    val name: String
+    val name: String,
+    val filePath: String
 )
