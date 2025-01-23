@@ -31,7 +31,7 @@ class MainFragment : Fragment() {
     private val vm by lazy(LazyThreadSafetyMode.NONE) {
         ViewModelProvider(
             this,
-            MainViewModelFactory(requireContext().applicationContext)
+            ViewModelFactory(requireContext().applicationContext)
         )[MainViewModel::class.java]
     }
 
