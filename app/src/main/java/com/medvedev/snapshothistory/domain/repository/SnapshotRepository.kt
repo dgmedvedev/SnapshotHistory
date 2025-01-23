@@ -14,6 +14,7 @@ interface SnapshotRepository {
     suspend fun getSnapshot(snapshotId: Int): Snapshot
     suspend fun startCamera(lifecycleOwner: LifecycleOwner, viewFinder: PreviewView)
     fun takeSnapshot(
+        snapshotName: String,
         uri: Uri?,
         contentResolver: ContentResolver,
         imageSavedCallback: ImageCapture.OnImageSavedCallback

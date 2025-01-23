@@ -10,6 +10,7 @@ interface CameraManager {
     fun startCamera(lifecycleOwner: LifecycleOwner, viewFinder: PreviewView)
     fun stopCamera()
     fun takeSnapshot(
+        snapshotName: String,
         folderPath: String,
         outputDirectory: File,
         contentResolver: ContentResolver,

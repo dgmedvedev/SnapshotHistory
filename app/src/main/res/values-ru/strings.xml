@@ -14,4 +14,5 @@
 
     <!--    Errors-->
     <string name="processing_failed">Processing failed.</string>
+    <string name="unknown_viewmodel_class">Unknown ViewModel class</string>
 </resources>

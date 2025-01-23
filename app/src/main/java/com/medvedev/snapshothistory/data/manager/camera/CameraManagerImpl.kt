@@ -16,8 +16,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
 import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class CameraManagerImpl(private val context: Context) : CameraManager {
 
@@ -59,16 +57,13 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
     }
 
     override fun takeSnapshot(
+        snapshotName: String,
         folderPath: String,
         outputDirectory: File,
         contentResolver: ContentResolver,
         imageSavedCallback: ImageCapture.OnImageSavedCallback
     ) {
         val outputOptions: ImageCapture.OutputFileOptions
-
-        val name = SimpleDateFormat(NAME_FORMAT, Locale.getDefault())
-            .format(System.currentTimeMillis())
-        val snapshotName = String.format(DISPLAY_NAME_FORMAT, name)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val contentValues = ContentValues().apply {
@@ -94,8 +89,6 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
     }
 
     companion object {
-        private const val NAME_FORMAT = "yyyyMMdd_HH-mm-ss"
-        private const val DISPLAY_NAME_FORMAT = "%s.jpg"
         private const val JPEG_TYPE = "image/jpeg"
     }
 }

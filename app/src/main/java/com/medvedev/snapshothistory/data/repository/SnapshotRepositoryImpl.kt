@@ -43,13 +43,16 @@ class SnapshotRepositoryImpl(
     }
 
     override fun takeSnapshot(
+        snapshotName: String,
         uri: Uri?,
         contentResolver: ContentResolver,
         imageSavedCallback: ImageCapture.OnImageSavedCallback
     ) {
         val folderPath = fileManager.getFolderPathFromUri(uri)
         val outputDirectory = fileManager.getOutputDirectory(folderPath)
-        cameraManager.takeSnapshot(folderPath, outputDirectory, contentResolver, imageSavedCallback)
+        cameraManager.takeSnapshot(
+            snapshotName, folderPath, outputDirectory, contentResolver, imageSavedCallback
+        )
     }
 
     override fun configureSaveDirectory(directory: String) {

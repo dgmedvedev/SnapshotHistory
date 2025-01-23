@@ -1,7 +1,6 @@
 package com.medvedev.snapshothistory.app.presentation.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -29,7 +28,7 @@ class SnapshotAdapter(private val onSnapshotItemClickListener: (Snapshot) -> Uni
     }
 
     inner class SnapshotHolder(private val binding: SnapshotItemBinding) :
-        RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+        RecyclerView.ViewHolder(binding.root) {
         private lateinit var snapshotItem: Snapshot
 
         fun bind(snapshot: Snapshot) {
@@ -39,12 +38,9 @@ class SnapshotAdapter(private val onSnapshotItemClickListener: (Snapshot) -> Uni
                 tvName.text = snapshotItem.name
                 tvDate.text = date
                 root.setOnClickListener {
+                    onSnapshotItemClickListener.invoke(snapshotItem)
                 }
             }
-        }
-
-        override fun onClick(v: View?) {
-            onSnapshotItemClickListener.invoke(snapshotItem)
         }
     }
 
