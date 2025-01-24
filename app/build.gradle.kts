@@ -63,8 +63,9 @@ dependencies {
     // Picasso
     implementation(libs.picasso)
 
-    // Google Play Services Location
+    // Google Play Services Location & Maps
     implementation(libs.play.services.location)
+    implementation(libs.play.services.maps)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
