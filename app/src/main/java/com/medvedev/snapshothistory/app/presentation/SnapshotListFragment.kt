@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.medvedev.snapshothistory.R
@@ -50,14 +49,19 @@ class SnapshotListFragment : Fragment() {
     }
 
     private fun bindViewModel() {
-        vm.snapshotList.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
+        vm.snapshotList.observe(viewLifecycleOwner) { snapshotList ->
+            adapter.submitList(snapshotList)
         }
     }
 
     private fun onSnapshotItemClickListener(): (Snapshot) -> Unit = { snapshot ->
-        Toast.makeText(requireContext(), "${snapshot.id}", Toast.LENGTH_SHORT).show()
-        launchFragment(SnapshotFragment.getInstance(snapshot.filePath))
+        launchFragment(
+            SnapshotFragment.getInstance(
+                snapshot.filePath,
+                snapshot.latitude,
+                snapshot.longitude
+            )
+        )
     }
 
     private fun launchFragment(fragment: Fragment) {
