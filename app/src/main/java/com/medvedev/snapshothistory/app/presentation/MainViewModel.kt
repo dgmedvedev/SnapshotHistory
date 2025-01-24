@@ -93,7 +93,10 @@ class MainViewModel(
         private const val DISPLAY_NAME_FORMAT = "%s.jpg"
         private const val UNDEFINED_FILE_PATH = ""
         val REQUIRED_PERMISSIONS =
-            mutableListOf(Manifest.permission.CAMERA).apply {
+            mutableListOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     add(Manifest.permission.READ_EXTERNAL_STORAGE)
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
