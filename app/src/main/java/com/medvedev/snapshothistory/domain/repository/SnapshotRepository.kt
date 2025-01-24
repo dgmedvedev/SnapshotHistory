@@ -1,13 +1,13 @@
 package com.medvedev.snapshothistory.domain.repository
 
 import android.content.ContentResolver
+import android.location.Location
 import android.net.Uri
 import androidx.camera.core.ImageCapture
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import com.medvedev.snapshothistory.domain.model.Snapshot
-import java.io.File
 
 interface SnapshotRepository {
     suspend fun addSnapshot(snapshot: Snapshot)
@@ -21,7 +21,7 @@ interface SnapshotRepository {
     )
 
     fun stopCamera()
-    fun getOutputDirectory(uri: Uri?): File
+    fun getLocation(): Location?
     fun configureSaveDirectory(directory: String)
     fun getSnapshotList(): LiveData<List<Snapshot>>
 }
