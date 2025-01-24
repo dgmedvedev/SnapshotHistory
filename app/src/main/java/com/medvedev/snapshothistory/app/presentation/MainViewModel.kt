@@ -69,10 +69,11 @@ class MainViewModel(
                     }
 
                     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                        val msg1 = "Photo capture succeeded: ${output.savedUri}"
-                        Log.d(SnapshotRepositoryImpl.LOG_TAG, msg1)
                         val date = Date(currentTimeMillis)
                         val location = getLocationUseCase()
+
+                        Log.d(SnapshotRepositoryImpl.LOG_TAG, "location: $location")
+
                         val latitude = location?.latitude ?: DEFAULT_LOCATION
                         val longitude = location?.longitude ?: DEFAULT_LOCATION
                         val filePath = output.savedUri?.toString() ?: UNDEFINED_FILE_PATH
@@ -93,14 +94,15 @@ class MainViewModel(
     }
 
     companion object {
-        private const val NAME_FORMAT = "yyyyMMdd_HH-mm-ss"
+        private const val NAME_FORMAT = "ddMMyyyy_HH-mm-ss"
         private const val DISPLAY_NAME_FORMAT = "%s.jpg"
         private const val UNDEFINED_FILE_PATH = ""
         private const val DEFAULT_LOCATION = 0.0
         val REQUIRED_PERMISSIONS =
             mutableListOf(
                 Manifest.permission.CAMERA,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     add(Manifest.permission.READ_EXTERNAL_STORAGE)

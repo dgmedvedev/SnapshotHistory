@@ -15,6 +15,8 @@ devtoolsKsp = "2.1.0-1.0.29"
 roomVersion = "2.6.1"
 picassoVersion = "2.8"
 locationVersion = "21.3.0"
+mapsVersion = "19.0.0"
+googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
 
 [libraries]
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
@@ -39,8 +41,10 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 
 picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picassoVersion" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "locationVersion" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "mapsVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtoolsKsp" }
+google-android-libraries-mapsplatform-secrets-gradle-plugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "googleAndroidLibrariesMapsplatformSecretsGradlePlugin" }
