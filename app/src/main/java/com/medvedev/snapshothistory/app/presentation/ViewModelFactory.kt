@@ -7,9 +7,10 @@ import com.medvedev.snapshothistory.R
 import com.medvedev.snapshothistory.data.database.SnapshotDatabase
 import com.medvedev.snapshothistory.data.manager.camera.CameraManagerImpl
 import com.medvedev.snapshothistory.data.manager.file.FileManagerImpl
+import com.medvedev.snapshothistory.data.manager.location.AppLocationManagerImpl
 import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
 import com.medvedev.snapshothistory.domain.usecase.AddSnapshotUseCase
-import com.medvedev.snapshothistory.domain.usecase.GetOutputDirectoryUseCase
+import com.medvedev.snapshothistory.domain.usecase.GetLocationUseCase
 import com.medvedev.snapshothistory.domain.usecase.GetSnapshotListUseCase
 import com.medvedev.snapshothistory.domain.usecase.StartCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.StopCameraUseCase
@@ -17,13 +18,11 @@ import com.medvedev.snapshothistory.domain.usecase.TakeSnapshotUseCase
 
 class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
 
-    private val cameraManager by lazy {
-        CameraManagerImpl(context = context)
-    }
+    private val appLocationManager by lazy { AppLocationManagerImpl(context = context) }
 
-    private val fileManager by lazy {
-        FileManagerImpl()
-    }
+    private val cameraManager by lazy { CameraManagerImpl(context = context) }
+
+    private val fileManager by lazy { FileManagerImpl() }
 
     private val snapshotDao by lazy {
         SnapshotDatabase.getInstance(context = context).snapshotDao()
@@ -31,6 +30,7 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
 
     private val snapshotRepository by lazy {
         SnapshotRepositoryImpl(
+            appLocationManager = appLocationManager,
             cameraManager = cameraManager,
             fileManager = fileManager,
             snapshotDao = snapshotDao
@@ -41,8 +41,12 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
         AddSnapshotUseCase(repository = snapshotRepository)
     }
 
-    private val getOutputDirectoryUseCase by lazy(LazyThreadSafetyMode.NONE) {
-        GetOutputDirectoryUseCase(repository = snapshotRepository)
+    private val getLocationUseCase by lazy(LazyThreadSafetyMode.NONE) {
+        GetLocationUseCase(repository = snapshotRepository)
+    }
+
+    private val getSnapshotListUseCase by lazy(LazyThreadSafetyMode.NONE) {
+        GetSnapshotListUseCase(repository = snapshotRepository)
     }
 
     private val startCameraUseCase by lazy(LazyThreadSafetyMode.NONE) {
@@ -57,16 +61,12 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
         TakeSnapshotUseCase(repository = snapshotRepository)
     }
 
-    private val getSnapshotListUseCase by lazy(LazyThreadSafetyMode.NONE) {
-        GetSnapshotListUseCase(repository = snapshotRepository)
-    }
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
 
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
             return MainViewModel(
                 addSnapshotUseCase = addSnapshotUseCase,
-                getOutputDirectoryUseCase = getOutputDirectoryUseCase,
+                getLocationUseCase = getLocationUseCase,
                 startCameraUseCase = startCameraUseCase,
                 stopCameraUseCase = stopCameraUseCase,
                 takeSnapshotUseCase = takeSnapshotUseCase

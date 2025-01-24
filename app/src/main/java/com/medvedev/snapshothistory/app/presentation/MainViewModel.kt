@@ -16,7 +16,7 @@ import androidx.lifecycle.viewModelScope
 import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
 import com.medvedev.snapshothistory.domain.model.Snapshot
 import com.medvedev.snapshothistory.domain.usecase.AddSnapshotUseCase
-import com.medvedev.snapshothistory.domain.usecase.GetOutputDirectoryUseCase
+import com.medvedev.snapshothistory.domain.usecase.GetLocationUseCase
 import com.medvedev.snapshothistory.domain.usecase.StartCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.StopCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.TakeSnapshotUseCase
@@ -29,7 +29,7 @@ import java.util.Locale
 
 class MainViewModel(
     private val addSnapshotUseCase: AddSnapshotUseCase,
-    private val getOutputDirectoryUseCase: GetOutputDirectoryUseCase,
+    private val getLocationUseCase: GetLocationUseCase,
     private val startCameraUseCase: StartCameraUseCase,
     private val stopCameraUseCase: StopCameraUseCase,
     private val takeSnapshotUseCase: TakeSnapshotUseCase
@@ -71,9 +71,13 @@ class MainViewModel(
                     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                         val msg1 = "Photo capture succeeded: ${output.savedUri}"
                         Log.d(SnapshotRepositoryImpl.LOG_TAG, msg1)
-                        val filePath = output.savedUri?.toString() ?: UNDEFINED_FILE_PATH
                         val date = Date(currentTimeMillis)
-                        val snapshot = Snapshot(date, 0.0, 0.0, snapshotName, filePath)
+                        val location = getLocationUseCase()
+                        val latitude = location?.latitude ?: DEFAULT_LOCATION
+                        val longitude = location?.longitude ?: DEFAULT_LOCATION
+                        val filePath = output.savedUri?.toString() ?: UNDEFINED_FILE_PATH
+                        val snapshot = Snapshot(date, latitude, longitude, snapshotName, filePath)
+                        Log.d(SnapshotRepositoryImpl.LOG_TAG, "$snapshot")
                         addSnapshotToDB(snapshot = snapshot)
                         _resultPhotoCapture.value = output.savedUri.toString()
                     }
@@ -92,8 +96,12 @@ class MainViewModel(
         private const val NAME_FORMAT = "yyyyMMdd_HH-mm-ss"
         private const val DISPLAY_NAME_FORMAT = "%s.jpg"
         private const val UNDEFINED_FILE_PATH = ""
+        private const val DEFAULT_LOCATION = 0.0
         val REQUIRED_PERMISSIONS =
-            mutableListOf(Manifest.permission.CAMERA).apply {
+            mutableListOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ).apply {
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
                     add(Manifest.permission.READ_EXTERNAL_STORAGE)
                     add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
