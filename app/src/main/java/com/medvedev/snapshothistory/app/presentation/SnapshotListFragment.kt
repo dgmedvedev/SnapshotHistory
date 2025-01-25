@@ -57,6 +57,13 @@ class SnapshotListFragment : Fragment() {
         vm.filteredSnapshotList.observe(viewLifecycleOwner) { snapshotList ->
             adapter.submitList(snapshotList)
         }
+        vm.invalidInput.observe(viewLifecycleOwner) {
+            binding.tilSearch.error =
+                when (it) {
+                    R.string.invalid_input -> getString(R.string.warning_text)
+                    else -> null
+                }
+        }
     }
 
     private fun onSnapshotItemClickListener(): (Snapshot) -> Unit = { snapshot ->

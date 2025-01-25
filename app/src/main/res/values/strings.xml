@@ -14,8 +14,11 @@
     <string name="snapshot_not_found">Snapshot not found</string>
     <string name="location_of_snapshot">Location of the snapshot</string>
     <string name="hint_text_field_search">Date search</string>
+    <string name="warning_text">(search template : 22012025)</string>
 
     <!--    Errors-->
     <string name="processing_failed">Processing failed.</string>
     <string name="unknown_viewmodel_class">Unknown ViewModel class</string>
+    <string name="invalid_input">Invalid input</string>
+    <string name="text_is_valid">Text is valid</string>
 </resources>
