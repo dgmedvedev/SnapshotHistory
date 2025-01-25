@@ -9,10 +9,11 @@
     <string name="select_folder">Выберите папку для сохранения</string>
     <string name="allowed_directories">Разрешенными каталогами являются [DCIM, Pictures]</string>
     <string name="tools_text_date">22.01.2025 12:05</string>
-    <string name="tools_text_name">20250122–120510.jpg</string>
+    <string name="tools_text_name">22012025–120510.jpg</string>
     <string name="selected_snapshot">Выбранный снимок</string>
     <string name="snapshot_not_found">Снимок не найден</string>
     <string name="location_of_snapshot">Местоположение снимка</string>
+    <string name="hint_text_field_search">Поиск по дате</string>
 
     <!--    Errors-->
     <string name="processing_failed">Processing failed.</string>

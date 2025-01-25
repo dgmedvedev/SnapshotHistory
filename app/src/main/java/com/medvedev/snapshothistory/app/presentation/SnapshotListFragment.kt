@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.medvedev.snapshothistory.R
@@ -40,6 +41,7 @@ class SnapshotListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindViewModel()
+        setListeners()
         binding.rvSnapshotList.adapter = adapter
     }
 
@@ -49,7 +51,10 @@ class SnapshotListFragment : Fragment() {
     }
 
     private fun bindViewModel() {
-        vm.snapshotList.observe(viewLifecycleOwner) { snapshotList ->
+        vm.snapshotListFromDB.observe(viewLifecycleOwner) { snapshotList ->
+            adapter.submitList(snapshotList)
+        }
+        vm.filteredSnapshotList.observe(viewLifecycleOwner) { snapshotList ->
             adapter.submitList(snapshotList)
         }
     }
@@ -62,6 +67,12 @@ class SnapshotListFragment : Fragment() {
                 snapshot.longitude
             )
         )
+    }
+
+    private fun setListeners() {
+        binding.etSearch.addTextChangedListener { text ->
+            vm.filterList(text.toString())
+        }
     }
 
     private fun launchFragment(fragment: Fragment) {
