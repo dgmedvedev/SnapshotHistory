@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.ContentResolver
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.view.PreviewView
@@ -13,12 +12,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
 import com.medvedev.snapshothistory.domain.model.Snapshot
 import com.medvedev.snapshothistory.domain.usecase.AddSnapshotUseCase
 import com.medvedev.snapshothistory.domain.usecase.GetLocationUseCase
 import com.medvedev.snapshothistory.domain.usecase.StartCameraUseCase
-import com.medvedev.snapshothistory.domain.usecase.StopCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.TakeSnapshotUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +28,6 @@ class MainViewModel(
     private val addSnapshotUseCase: AddSnapshotUseCase,
     private val getLocationUseCase: GetLocationUseCase,
     private val startCameraUseCase: StartCameraUseCase,
-    private val stopCameraUseCase: StopCameraUseCase,
     private val takeSnapshotUseCase: TakeSnapshotUseCase
 ) : ViewModel() {
 
@@ -41,10 +37,6 @@ class MainViewModel(
 
     fun startCamera(lifecycleOwner: LifecycleOwner, viewFinder: PreviewView) {
         viewModelScope.launch { startCameraUseCase(lifecycleOwner, viewFinder) }
-    }
-
-    fun stopCamera() {
-        stopCameraUseCase()
     }
 
     fun onCameraButtonPressed(
@@ -60,27 +52,18 @@ class MainViewModel(
             takeSnapshotUseCase(snapshotName, uri, contentResolver,
                 object : ImageCapture.OnImageSavedCallback {
                     override fun onError(exc: ImageCaptureException) {
-                        Log.e(
-                            SnapshotRepositoryImpl.LOG_TAG,
-                            "Photo capture failed: ${exc.message}",
-                            exc
-                        )
                         _resultPhotoCapture.value = exc.message
                     }
 
                     override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                         val date = Date(currentTimeMillis)
                         val location = getLocationUseCase()
-
-                        Log.d(SnapshotRepositoryImpl.LOG_TAG, "location: $location")
-
                         val latitude = location?.latitude ?: DEFAULT_LOCATION
                         val longitude = location?.longitude ?: DEFAULT_LOCATION
                         val filePath = output.savedUri?.toString() ?: UNDEFINED_FILE_PATH
                         val snapshot = Snapshot(date, latitude, longitude, snapshotName, filePath)
-                        Log.d(SnapshotRepositoryImpl.LOG_TAG, "$snapshot")
                         addSnapshotToDB(snapshot = snapshot)
-                        _resultPhotoCapture.value = output.savedUri.toString()
+                        _resultPhotoCapture.value = output.savedUri?.path
                     }
                 }
             )

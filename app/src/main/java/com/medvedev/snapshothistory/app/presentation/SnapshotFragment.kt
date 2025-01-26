@@ -1,7 +1,6 @@
 package com.medvedev.snapshothistory.app.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,8 +17,8 @@ class SnapshotFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("SnapshotFragment == null")
 
     private var filePath: String = UNDEFINED_FILE_PATH
-    private var latitude: Double = DEFAULT_LOCATION
-    private var longitude: Double = DEFAULT_LOCATION
+    private var latitude: Double = DEFAULT_LATITUDE
+    private var longitude: Double = DEFAULT_LONGITUDE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +47,6 @@ class SnapshotFragment : Fragment() {
 
     private fun setListeners() {
         binding.locationButton.setOnClickListener {
-            Log.e("CameraX_TEST", "setListeners() $latitude : $longitude")
             launchFragment(MapFragment.getInstance(latitude, longitude))
         }
     }
@@ -76,8 +74,8 @@ class SnapshotFragment : Fragment() {
 
     private fun parseParams() {
         filePath = requireArguments().getString(ARG_IMAGE_PATH, UNDEFINED_FILE_PATH)
-        latitude = requireArguments().getDouble(ARG_LATITUDE, DEFAULT_LOCATION)
-        longitude = requireArguments().getDouble(ARG_LONGITUDE, DEFAULT_LOCATION)
+        latitude = requireArguments().getDouble(ARG_LATITUDE, DEFAULT_LATITUDE)
+        longitude = requireArguments().getDouble(ARG_LONGITUDE, DEFAULT_LONGITUDE)
     }
 
     companion object {
@@ -85,7 +83,8 @@ class SnapshotFragment : Fragment() {
         private const val ARG_IMAGE_PATH = "imagePath"
         private const val ARG_LATITUDE = "latitude"
         private const val ARG_LONGITUDE = "longitude"
-        private const val DEFAULT_LOCATION = 0.0
+        private const val DEFAULT_LATITUDE = 37.7749
+        private const val DEFAULT_LONGITUDE = -122.4194
 
         fun getInstance(filePath: String, latitude: Double, longitude: Double): SnapshotFragment =
             SnapshotFragment().apply {
