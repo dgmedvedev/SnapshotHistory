@@ -35,7 +35,7 @@ class MainViewModel(
     private val takeSnapshotUseCase: TakeSnapshotUseCase
 ) : ViewModel() {
 
-    private var _resultPhotoCapture = MutableLiveData<String>()
+    private val _resultPhotoCapture = MutableLiveData<String>()
     val resultPhotoCapture: LiveData<String>
         get() = _resultPhotoCapture
 

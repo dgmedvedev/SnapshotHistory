@@ -4,17 +4,22 @@
     <string name="fab_take_snapshot">Сделать снимок</string>
     <string name="fab_snapshot_list">Просмотреть снимки</string>
     <string name="fab_location">Посмотреть местоположение</string>
+    <string name="btn_date_selection">Выбор даты</string>
     <string name="permissions_must_be_granted">Необходимо предоставить все разрешения</string>
     <string name="try_again">Попробуйте снова</string>
     <string name="select_folder">Выберите папку для сохранения</string>
     <string name="allowed_directories">Разрешенными каталогами являются [DCIM, Pictures]</string>
     <string name="tools_text_date">22.01.2025 12:05</string>
-    <string name="tools_text_name">20250122–120510.jpg</string>
+    <string name="tools_text_name">22012025–120510.jpg</string>
     <string name="selected_snapshot">Выбранный снимок</string>
     <string name="snapshot_not_found">Снимок не найден</string>
     <string name="location_of_snapshot">Местоположение снимка</string>
+    <string name="hint_text_field_search">Поиск по дате (ДДММГГГГ)</string>
+    <string name="warning_text">(шаблон для поиска : 22012025)</string>
 
     <!--    Errors-->
     <string name="processing_failed">Processing failed.</string>
     <string name="unknown_viewmodel_class">Unknown ViewModel class</string>
+    <string name="invalid_input">Invalid input</string>
+    <string name="text_is_valid">Text is valid</string>
 </resources>
