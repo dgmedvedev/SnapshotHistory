@@ -13,7 +13,6 @@ import com.medvedev.snapshothistory.domain.usecase.AddSnapshotUseCase
 import com.medvedev.snapshothistory.domain.usecase.GetLocationUseCase
 import com.medvedev.snapshothistory.domain.usecase.GetSnapshotListUseCase
 import com.medvedev.snapshothistory.domain.usecase.StartCameraUseCase
-import com.medvedev.snapshothistory.domain.usecase.StopCameraUseCase
 import com.medvedev.snapshothistory.domain.usecase.TakeSnapshotUseCase
 
 class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
@@ -53,10 +52,6 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
         StartCameraUseCase(repository = snapshotRepository)
     }
 
-    private val stopCameraUseCase by lazy(LazyThreadSafetyMode.NONE) {
-        StopCameraUseCase(repository = snapshotRepository)
-    }
-
     private val takeSnapshotUseCase by lazy(LazyThreadSafetyMode.NONE) {
         TakeSnapshotUseCase(repository = snapshotRepository)
     }
@@ -68,7 +63,6 @@ class ViewModelFactory(private val context: Context) : ViewModelProvider.Factory
                 addSnapshotUseCase = addSnapshotUseCase,
                 getLocationUseCase = getLocationUseCase,
                 startCameraUseCase = startCameraUseCase,
-                stopCameraUseCase = stopCameraUseCase,
                 takeSnapshotUseCase = takeSnapshotUseCase
             ) as T
         } else if (modelClass.isAssignableFrom(SnapshotListViewModel::class.java)) {

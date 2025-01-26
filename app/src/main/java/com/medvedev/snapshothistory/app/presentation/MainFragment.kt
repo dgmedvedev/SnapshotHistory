@@ -103,7 +103,8 @@ class MainFragment : Fragment() {
                 getString(R.string.processing_failed) -> getString(R.string.allowed_directories)
                 else -> result
             }
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            Toast.makeText(context, getString(R.string.snapshot_saved, message), Toast.LENGTH_LONG)
+                .show()
         }
     }
 

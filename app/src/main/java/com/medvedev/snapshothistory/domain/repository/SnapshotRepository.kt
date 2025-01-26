@@ -20,8 +20,6 @@ interface SnapshotRepository {
         imageSavedCallback: ImageCapture.OnImageSavedCallback
     )
 
-    fun stopCamera()
     fun getLocation(): Location?
-    fun configureSaveDirectory(directory: String)
     fun getSnapshotList(): LiveData<List<Snapshot>>
 }

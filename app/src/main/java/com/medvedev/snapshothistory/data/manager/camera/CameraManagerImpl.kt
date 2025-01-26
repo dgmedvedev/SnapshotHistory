@@ -5,7 +5,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
@@ -14,7 +13,6 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.common.util.concurrent.ListenableFuture
-import com.medvedev.snapshothistory.data.repository.SnapshotRepositoryImpl
 import java.io.File
 
 class CameraManagerImpl(private val context: Context) : CameraManager {
@@ -42,12 +40,7 @@ class CameraManagerImpl(private val context: Context) : CameraManager {
                     preview,
                     imageCapture
                 )
-            } catch (exc: Exception) {
-                Log.e(
-                    SnapshotRepositoryImpl.LOG_TAG,
-                    "CameraRepositoryImpl: Use case binding failed",
-                    exc
-                )
+            } catch (_: Exception) {
             }
         }, ContextCompat.getMainExecutor(context))
     }

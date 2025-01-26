@@ -22,4 +22,5 @@
     <string name="unknown_viewmodel_class">Unknown ViewModel class</string>
     <string name="invalid_input">Invalid input</string>
     <string name="text_is_valid">Text is valid</string>
+    <string name="snapshot_saved">Снимок сохранен: %s</string>
 </resources>

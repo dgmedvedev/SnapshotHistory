@@ -29,10 +29,6 @@ class SnapshotRepositoryImpl(
         snapshotDao.addSnapshot(snapshot.toEntity())
     }
 
-    override fun configureSaveDirectory(directory: String) {
-        TODO("Not yet implemented")
-    }
-
     override fun getLocation(): Location? =
         appLocationManager.getLocation()
 
@@ -50,10 +46,6 @@ class SnapshotRepositoryImpl(
         cameraManager.startCamera(lifecycleOwner, viewFinder)
     }
 
-    override fun stopCamera() {
-        cameraManager.stopCamera()
-    }
-
     override fun takeSnapshot(
         snapshotName: String,
         uri: Uri?,
@@ -65,9 +57,5 @@ class SnapshotRepositoryImpl(
         cameraManager.takeSnapshot(
             snapshotName, folderPath, outputDirectory, contentResolver, imageSavedCallback
         )
-    }
-
-    companion object {
-        const val LOG_TAG = "CameraX_TEST"
     }
 }
