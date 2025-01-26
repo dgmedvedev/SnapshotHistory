@@ -14,13 +14,17 @@ class SnapshotListViewModel(
 
     val snapshotListFromDB: LiveData<List<Snapshot>> = getSnapshotListUseCase()
 
-    private var _filteredSnapshotList = MutableLiveData<List<Snapshot>>()
+    private val _filteredSnapshotList = MutableLiveData<List<Snapshot>>()
     val filteredSnapshotList: LiveData<List<Snapshot>>
         get() = _filteredSnapshotList
 
-    private var _invalidInput = MutableLiveData<Int>()
+    private val _invalidInput = MutableLiveData<Int>()
     val invalidInput: LiveData<Int>
         get() = _invalidInput
+
+    private val _selectedDate = MutableLiveData<String>()
+    val selectedDate: LiveData<String>
+        get() = _selectedDate
 
     private fun textIsValid(text: String): Boolean =
         Pattern.matches(ONLY_NUMBERS, text) || text.isEmpty()
@@ -33,6 +37,18 @@ class SnapshotListViewModel(
         } else {
             _invalidInput.value = R.string.invalid_input
         }
+    }
+
+    fun setSelectedDate(selectedYear: Int, selectedMonth: Int, selectedDay: Int) {
+        val day = if (selectedDay < 10) {
+            "0$selectedDay"
+        } else "$selectedDay"
+        val month = if (selectedMonth + 1 < 10) {
+            "0${selectedMonth + 1}"
+        } else "${selectedMonth + 1}"
+
+        val selectedDate = "$day$month$selectedYear"
+        _selectedDate.value = selectedDate
     }
 
     companion object {

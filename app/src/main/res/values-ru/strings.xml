@@ -4,6 +4,7 @@
     <string name="fab_take_snapshot">Сделать снимок</string>
     <string name="fab_snapshot_list">Просмотреть снимки</string>
     <string name="fab_location">Посмотреть местоположение</string>
+    <string name="btn_date_selection">Выбор даты</string>
     <string name="permissions_must_be_granted">Необходимо предоставить все разрешения</string>
     <string name="try_again">Попробуйте снова</string>
     <string name="select_folder">Выберите папку для сохранения</string>
@@ -13,7 +14,7 @@
     <string name="selected_snapshot">Выбранный снимок</string>
     <string name="snapshot_not_found">Снимок не найден</string>
     <string name="location_of_snapshot">Местоположение снимка</string>
-    <string name="hint_text_field_search">Поиск по дате</string>
+    <string name="hint_text_field_search">Поиск по дате (ДДММГГГГ)</string>
     <string name="warning_text">(шаблон для поиска : 22012025)</string>
 
     <!--    Errors-->

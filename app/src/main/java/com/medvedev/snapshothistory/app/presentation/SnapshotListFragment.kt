@@ -1,5 +1,6 @@
 package com.medvedev.snapshothistory.app.presentation
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import com.medvedev.snapshothistory.R
 import com.medvedev.snapshothistory.app.presentation.adapter.SnapshotAdapter
 import com.medvedev.snapshothistory.databinding.FragmentSnapshotListBinding
 import com.medvedev.snapshothistory.domain.model.Snapshot
+import java.util.Calendar
 
 class SnapshotListFragment : Fragment() {
 
@@ -64,6 +66,9 @@ class SnapshotListFragment : Fragment() {
                     else -> null
                 }
         }
+        vm.selectedDate.observe(viewLifecycleOwner) { selectedDate ->
+            binding.etSearch.setText(selectedDate)
+        }
     }
 
     private fun onSnapshotItemClickListener(): (Snapshot) -> Unit = { snapshot ->
@@ -80,6 +85,22 @@ class SnapshotListFragment : Fragment() {
         binding.etSearch.addTextChangedListener { text ->
             vm.filterList(text.toString())
         }
+        binding.btnCalendar.setOnClickListener {
+            showDatePickerDialog()
+        }
+    }
+
+    private fun showDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog =
+            DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                vm.setSelectedDate(selectedYear, selectedMonth, selectedDay)
+            }, year, month, day)
+        datePickerDialog.show()
     }
 
     private fun launchFragment(fragment: Fragment) {

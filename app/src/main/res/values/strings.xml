@@ -4,6 +4,7 @@
     <string name="fab_take_snapshot">Take a snapshot</string>
     <string name="fab_snapshot_list">View snapshots</string>
     <string name="fab_location">View location</string>
+    <string name="btn_date_selection">Date selection</string>
     <string name="permissions_must_be_granted">All permissions must be granted</string>
     <string name="try_again">Try again</string>
     <string name="select_folder">Select a folder to save</string>
@@ -13,7 +14,7 @@
     <string name="selected_snapshot">The selected snapshot</string>
     <string name="snapshot_not_found">Snapshot not found</string>
     <string name="location_of_snapshot">Location of the snapshot</string>
-    <string name="hint_text_field_search">Date search</string>
+    <string name="hint_text_field_search">Date search (ddMMyyyy)</string>
     <string name="warning_text">(search template : 22012025)</string>
 
     <!--    Errors-->
